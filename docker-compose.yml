@@ -1,0 +1,15 @@
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "9090:80"
+
+  my_secret_db:
+    image: redis:latest
+
+  python-app:
+    build: ../py-app
+    ports:
+      - "5001:5000"  # Мы заходим на 5001, а Docker перекидывает на 5000 внутри
+    depends_on:
+      - my_secret_db
