@@ -20,9 +20,9 @@ def hello():
         </body>
     </html>
     '''
-@app.route('/i')
-def i():
-user_name = "BrontoDev"
+@app.route('/info')
+def info():
+    user_name = "BrontoDev"
     
     # Получаем текущее время
     now = datetime.datetime.now().strftime("%H:%M:%S")
