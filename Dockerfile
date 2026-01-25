@@ -4,5 +4,5 @@ WORKDIR /app
 COPY requirements.txt .
 # Устанавливаем их
 RUN pip install --no-cache-dir -r requirements.txt
-COPY app.py .
+COPY . .
 CMD ["python", "-u", "app.py"]

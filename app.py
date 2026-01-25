@@ -15,7 +15,7 @@ def hello():
             <h1>Привет из Docker! 🐳</h1>
             <p style="font-size: 24px;">Этот сайт работает на Python и Redis.</p>
             <div style="font-size: 48px; color: #007bff; font-weight: bold;">
-             {UserWarning}brontozyabrjopa s ru4koi{count} раз
+             {UserWarning} ты заебал эту страничку уже{count} раз
             </div>
         </body>
     </html>
@@ -29,7 +29,7 @@ def info():
     return f"""
         <h1>Хsрактеристики сервера</h1>
         <p>Текущее время на сервере: {now}</p>
-	<p> разраб:{user_name}</p>
+	<p> разраб:{user_name}{now}</p>
         <a href="/">Назад на главную</a>
     """
 if __name__ == "__main__":
