@@ -4,7 +4,14 @@ import datetime
 import time
 
 app = Flask(__name__)
-cache = redis.Redis(host='my_secret_db', port=6379)
+cache = redis.Redis(
+    host='my_secret_db',
+      port=6379,
+      socket_timeout=0.1,
+      socket_connect_timeout=0.1,
+      retry_on_timeout=False,
+      health_check_interval=0
+)
 
 @app.route('/')
 def hello():
