@@ -1,14 +1,29 @@
 from flask import Flask
 import redis
 import datetime
+import time
 
 app = Flask(__name__)
 cache = redis.Redis(host='my_secret_db', port=6379)
 
 @app.route('/')
 def hello():
+    try:
     # Берем число из Redis и увеличиваем его
-    count = cache.incr('hits')
+        count = cache.incr('hits')
+        db_status = f"База данных работает! Посещений: {count}"
+    except redis.exceptions.ConnectionError:
+        db_status = "База данных временно недоступна (но я живой!)"
+    return f'''
+    <html>
+        <body style="text-align: center; font-family: sans-serif; margin-top: 50px;">
+            <h1>Привет из Docker! 🐳</h1>
+            <p>{db_status}</p>
+            <br>
+            <a href="/info">Посмотреть характеристики сервера</a>
+        </body>
+    </html>
+    '''
     return f'''
     <html>
         <body style="text-align: center; font-family: sans-serif; margin-top: 50px; color: purple;">
