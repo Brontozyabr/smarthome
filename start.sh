@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "Запускаю обновление системы..."
 docker compose up --build -d
-echo "Готово! Проверяю статус контейнеров:"
-docker compose ps
+echo "Система запущена!"
+docker image prune -f  # Эта команда удалит старые версии образов, которые больше не нужны
