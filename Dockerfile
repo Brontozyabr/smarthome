@@ -1,4 +1,7 @@
 FROM python:3.10-slim
+ENV TZ=Europe/Warsaw
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 WORKDIR /app
 # Копируем список библиотек
 COPY requirements.txt .

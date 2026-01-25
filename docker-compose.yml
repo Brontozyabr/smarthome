@@ -11,5 +11,9 @@ services:
     build: .
     ports:
       - "5001:5000"  # Мы заходим на 5001, а Docker перекидывает на 5000 внутри
+    
+    environment:
+      - timezone=Europe/Warsaw
+
     depends_on:
       - my_secret_db

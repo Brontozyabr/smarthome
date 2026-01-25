@@ -15,7 +15,8 @@ def hello():
             <h1>Привет из Docker! 🐳</h1>
             <p style="font-size: 24px;">Этот сайт работает на Python и Redis.</p>
             <div style="font-size: 48px; color: #007bff; font-weight: bold;">
-             {UserWarning} ты заебал эту страничку уже{count} раз
+             {UserWarning} ты заебал эту страничку уже {count} раз!
+             <a href="/info">вперде на главную</a>
             </div>
         </body>
     </html>
@@ -24,12 +25,25 @@ def hello():
 def info():
     user_name = "BrontoDev"
     
-    # Получаем текущее время
+    # Получаем текущий час (число от 0 до 23)
+    current_hour = datetime.datetime.now().hour
+    
+    # Логика выбора приветствия
+    if 5 <= current_hour < 12:
+        greeting = "Доброе утро"
+    elif 12 <= current_hour < 18:
+        greeting = "Добрый день"
+    elif 18 <= current_hour < 23:
+        greeting = "Добрый вечер"
+    else:
+        greeting = "Доброй ночи"
+
     now = datetime.datetime.now().strftime("%H:%M:%S")
+    
     return f"""
-        <h1>Хsрактеристики сервера</h1>
+        <h1>Характеристики сервера</h1>
+        <p>{greeting}, {user_name}!</p>
         <p>Текущее время на сервере: {now}</p>
-	<p> разраб:{user_name}{now}</p>
         <a href="/">Назад на главную</a>
     """
 if __name__ == "__main__":
