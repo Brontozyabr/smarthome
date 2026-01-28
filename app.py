@@ -1,48 +1,38 @@
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for, request
 import redis
 import datetime
-import time
-
 app = Flask(__name__)
 cache = redis.Redis(
     host='my_secret_db',
-      port=6379,
-      socket_timeout=0.1,
-      socket_connect_timeout=0.1,
-      retry_on_timeout=False,
-      health_check_interval=0
+    port=6379, 
+    socket_timeout=0.1,           # Ждать ответа всего 100мс
+    socket_connect_timeout=0.1,   # Ждать соединения всего 100мс
+    retry_on_timeout=False,       # Не повторять при ошибке
+    health_check_interval=0       # Отключить фоновые проверки
 )
-
 @app.route('/')
 def hello():
     try:
-    # Берем число из Redis и увеличиваем его
         count = cache.incr('hits')
-        db_status = f"База данных работает! Посещений: {count}"
-    except redis.exceptions.ConnectionError:
-        db_status = "База данных временно недоступна (но я живой!)"
-    return f'''
-    <html>
-        <body style="text-align: center; font-family: sans-serif; margin-top: 50px;">
-            <h1>Привет из Docker! 🐳</h1>
-            <p>{db_status}</p>
-            <br>
-            <a href="/info">Посмотреть характеристики сервера</a>
-        </body>
-    </html>
-    '''
-    return f'''
-    <html>
-        <body style="text-align: center; font-family: sans-serif; margin-top: 50px; color: purple;">
-            <h1>Привет из Docker! 🐳</h1>
-            <p style="font-size: 24px;">Этот сайт работает на Python и Redis.</p>
-            <div style="font-size: 48px; color: #007bff; font-weight: bold;">
-             {UserWarning} ты заебал эту страничку уже {count} раз!
-             <a href="/info">вперде на главную</a>
-            </div>
-        </body>
-    </html>
-    '''
+        # Читаем состояние света из Redis (по умолчанию 'ВЫКЛ')
+        light = cache.get('light_state')
+        light_status = light.decode('utf-8') if light else "ВЫКЛ"
+        status = f"Система онлайн. Посещений: {count}"
+    except Exception:
+        status = "База данных недоступна"
+        light_status = "Н/Д"
+    
+    return render_template('index.html', db_status=status, light_status=light_status)
+@app.route('/toggle_light', methods=['POST'])
+def toggle_light():
+    try:
+        current = cache.get('light_state')
+        new_state = "ВЫКЛ" if current and current.decode('utf-8') == "ВКЛ" else "ВКЛ"
+        cache.set('light_state', new_state)
+    except Exception:
+        pass
+    return redirect(url_for('hello'))
+
 @app.route('/info')
 def info():
     user_name = "BrontoDev"
