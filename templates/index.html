@@ -13,7 +13,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card p-4 text-center">
+                <div class="card p-4 text-center {{ 'bg-warning-subtle' if light_status == 'ВКЛ' else '' }}">
                     <h1 class="mb-4">Панель управления 🏠</h1>
                     <div class="alert alert-info">
                         {{ db_status }}
