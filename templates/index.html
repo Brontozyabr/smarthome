@@ -27,6 +27,14 @@
                             <button type="submit" class="btn {{ 'btn-warning' if light_status == 'ВКЛ' else 'btn-dark' }} w-100">
                                 Свет: {{ light_status }}
                             </button>
+                            <div style="margin-top: 20px; text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <h5>Журнал событий:</h5>
+                                <ul style="list-style-type: none; padding: 0;">
+                                    {% for event in history %}
+                                        <li style="border-bottom: 1px solid #ddd; padding: 5px 0;">{{ event }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </form>
                     </div>
                 </div>

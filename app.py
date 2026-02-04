@@ -10,6 +10,14 @@ cache = redis.Redis(
     retry_on_timeout=False,       # Не повторять при ошибке
     health_check_interval=0       # Отключить фоновые проверки
 )
+def add_event(message):
+    now = datetime.datetime.now().strftime("%H:%M:%S")
+    event_text = f"[{now}] {message}"
+    # lpush добавляет событие в начало списка 'history'
+    cache.lpush('history', event_text)
+    # Ограничиваем список последними 10 записями
+    cache.ltrim('history', 0, 9)
+
 @app.route('/')
 def hello():
     try:
@@ -18,19 +26,29 @@ def hello():
         light = cache.get('light_state')
         light_status = light.decode('utf-8') if light else "ВЫКЛ"
         status = f"Система онлайн. Посещений: {count}"
+
+        #1. ЗАБИРАЕМ ИСТОРИЮ ИЗ REDIS
+        history_raw = cache.lrange('history', 0, -1)
+        # 2. ДЕКОДИРУЕМ ИЗ БАЙТОВ В ТЕКСТ
+        history = [event.decode('utf-8') for event in history_raw]
+
     except Exception:
         status = "База данных недоступна"
         light_status = "Н/Д"
+        history = []
     
-    return render_template('index.html', db_status=status, light_status=light_status)
+    return render_template('index.html', db_status=status, light_status=light_status, history=history)
+
 @app.route('/toggle_light', methods=['POST'])
 def toggle_light():
     try:
         current = cache.get('light_state')
         new_state = "ВЫКЛ" if current and current.decode('utf-8') == "ВКЛ" else "ВКЛ"
         cache.set('light_state', new_state)
-    except Exception:
-        pass
+        # ВОТ ЭТА СТРОЧКА ДОЛЖНА БЫТЬ ТУТ:
+        add_event(f"Свет переключен на {new_state}")
+    except Exception as e:
+        print(f"Ошибка в Redis: {e}") # Это поможет увидеть ошибку в терминале
     return redirect(url_for('hello'))
 
 @app.route('/info')
